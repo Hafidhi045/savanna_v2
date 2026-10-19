@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Integrations | HAFIDHI WFI{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1>Provider integrations</h1>
+    <p class="muted">Credentials are read from the private local environment file and are never shown here.</p>
+  </div>
+</div>
+
+<section class="panel">
+  <div class="panel-head"><h2>Readiness</h2></div>
+  <div class="integration-list">
+    {% for provider in providers %}
+    <article class="integration-row">
+      <div>
+        <h3>{{ provider.name }}</h3>
+        <p class="muted">{{ provider.description }}</p>
+      </div>
+      <span class="badge {{ 'active' if provider.configured else 'partial' }}">
+        {{ 'Credentials present' if provider.configured else 'Setup required' }}
+      </span>
+    </article>
+    {% endfor %}
+  </div>
+  <div class="demo-note">
+    Copy <code>.env.example</code> to <code>.env</code>, enter credentials from your provider dashboards, then restart the app. Do not put customer or merchant PINs in this file.
+  </div>
+</section>
+{% endblock %}

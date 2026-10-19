@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Customers | Savanna{% endblock %}
+{% block content %}
+<div class="topbar"><div><h1>Customers & Devices</h1><p class="muted">One-device voucher records.</p></div></div>
+<div class="panel"><div class="table-wrap"><table>
+<thead>
+    <tr>
+    <th>Customer</th>
+    <th>Device</th>
+    <th>Voucher</th>
+    <th>Package</th>
+    <th>Status</th>
+    <th>Expiry</th>
+</tr>
+</thead>
+<tbody>{% for c in customers %}<tr>
+    <td>{{c.customer_name}}</td>
+    <td class="mono">{{c.device_id}}</td><td class="mono">{{c.code}}</td><td>{{c.package}}</td><td><span class="badge {{c.status}}">{{c.status}}</span></td><td>{{c.expires_at}}</td></tr>{% else %}<tr><td colspan="6" class="empty">No customers yet.</td></tr>{% endfor %}</tbody>
+</table></div></div>
+{% endblock %}

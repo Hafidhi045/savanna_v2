@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block html_lang %}{{ language }}{% endblock %}
+{% block title %}Savanna Wi-Fi | Connect{% endblock %}
+{% block content %}
+<div class="portal-wrap">
+<section class="portal-card portal-flow">
+<div class="portal-heading">
+<div class="logo-large">📶</div>
+<p class="portal-brand">HAFIDHI WFI</p>
+<nav class="portal-language" aria-label="Language">
+<a href="{{ url_for('portal', mode=mode, package_id=selected_package.id if selected_package else None, lang='en') }}" lang="en" {% if language == 'en' %}aria-current="page"{% endif %}>EN</a>
+<a href="{{ url_for('portal', mode=mode, package_id=selected_package.id if selected_package else None, lang='sw') }}" lang="sw" {% if language == 'sw' %}aria-current="page"{% endif %}>SW</a>
+</nav>
+</div>
+{% if message %}<div class="alert {{message[0]}}" role="status">{{message[1]}}</div>{% endif %}
+
+{% if mode == 'start' %}
+<h1>{{ text.connected }}</h1>
+<p class="muted">{{ text.choose_access }}</p>
+<div class="portal-options">
+<a class="portal-option" href="{{ url_for('portal', mode='voucher', lang=language) }}">
+<span class="portal-option-number">01</span>
+<strong>{{ text.have_voucher }}</strong>
+<span>{{ text.voucher_caption }}</span>
+</a>
+<a class="portal-option" href="{{ url_for('portal', mode='packages', lang=language) }}">
+<span class="portal-option-number">02</span>
+<strong>{{ text.buy_package }}</strong>
+<span>{{ text.buy_caption }}</span>
+</a>
+</div>
+{% elif mode == 'voucher' %}
+<a class="portal-back" href="{{ url_for('portal', lang=language) }}">&larr; {{ text.back }}</a>
+<h1>{{ text.voucher_heading }}</h1>
+<p class="muted">{{ text.voucher_details }}</p>
+<form method="post">
+<input type="hidden" name="action" value="voucher">
+<input type="hidden" name="lang" value="{{ language }}">
+<label for="voucher-code">{{ text.voucher_code }}</label>
+<input id="voucher-code" name="code" placeholder="SVN-XXXX-XXXX" autocomplete="off" required>
+<label for="device-id">{{ text.device_id }}</label>
+<input id="device-id" name="device_id" placeholder="{{ text.device_placeholder }}" required>
+<button class="btn primary full" type="submit">{{ text.connect }}</button>
+</form>
+{% elif mode == 'packages' %}
+<a class="portal-back" href="{{ url_for('portal', lang=language) }}">&larr; {{ text.back }}</a>
+<h1>{{ text.packages_heading }}</h1>
+<p class="muted">{{ text.packages_details }}</p>
+<div class="portal-packages">
+{% for package in packages %}
+<article class="portal-package">
+<div>
+<h2>{{ package.name }}</h2>
+<p class="muted">{{ text.hours.format(hours=package.duration_hours) }}</p>
+</div>
+<strong class="portal-price">TSh {{ "{:,}".format(package.price) }}</strong>
+<a class="btn primary full" href="{{ url_for('portal', mode='buy', package_id=package.id, lang=language) }}">{{ text.select_package }}</a>
+</article>
+{% else %}
+<p class="empty">{{ text.no_packages }}</p>
+{% endfor %}
+</div>
+{% elif mode == 'buy' and selected_package %}
+<a class="portal-back" href="{{ url_for('portal', mode='packages', lang=language) }}">&larr; {{ text.all_packages }}</a>
+<h1>{{ text.phone_heading }}</h1>
+<p class="muted">{{ text.payment_prompt }}</p>
+<div class="selected-package">
+<span>{{ selected_package.name }} &middot; {{ text.hours.format(hours=selected_package.duration_hours) }}</span>
+<strong>TSh {{ "{:,}".format(selected_package.price) }}</strong>
+</div>
+<form method="post">
+<input type="hidden" name="action" value="purchase">
+<input type="hidden" name="package_id" value="{{ selected_package.id }}">
+<input type="hidden" name="lang" value="{{ language }}">
+<label for="phone-number">{{ text.phone_number }}</label>
+<input id="phone-number" type="tel" name="phone" autocomplete="tel" placeholder="{{ text.phone_placeholder }}" required>
+<button class="btn primary full" type="submit">{{ text.continue_payment }}</button>
+</form>
+{% endif %}
+</section>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Sales | Savanna{% endblock %}
+{% block content %}
+<div class="topbar"><div><h1>Sales</h1><p class="muted">Voucher revenue records.</p></div></div>
+<div class="revenue-banner">Total Revenue <strong>{{"{:,}".format(total)}} TSh</strong></div>
+<div class="panel"><div class="table-wrap"><table>
+<thead><tr><th>Voucher</th><th>Package</th><th>Amount</th><th>Method</th><th>Status</th><th>Date</th></tr></thead>
+<tbody>{% for s in sales %}<tr><td class="mono">{{s.code}}</td><td>{{s.package}}</td><td>{{"{:,}".format(s.amount)}} TSh</td><td>{{s.payment_method or 'cash'}}</td><td><span class="badge {{s.payment_status}}">{{s.payment_status}}</span></td><td>{{s.sold_at}}</td></tr>{% else %}<tr><td colspan="6" class="empty">No sales yet.</td></tr>{% endfor %}</tbody>
+</table></div></div>
+{% endblock %}

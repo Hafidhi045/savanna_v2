@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Vouchers | Savanna{% endblock %}
+{% block content %}
+<div class="topbar"><div><h1>Voucher Management</h1><p class="muted">Generate and activate customer access.</p></div></div>
+
+<div class="two-col">
+  <section class="panel">
+    <h2>Generate Vouchers</h2>
+    <form method="post">
+      <label>Package</label>
+      <select name="package_id" required>
+      {% for p in packages %}<option value="{{p.id}}">{{p.name}} — {{p.price}} TSh</option>{% endfor %}
+      </select>
+      <label for="voucher-customer-phone">Customer phone number</label>
+      <input id="voucher-customer-phone" type="tel" name="customer_phone" autocomplete="tel" placeholder="e.g. +255 7XX XXX XXX" required>
+      <label>Quantity</label>
+      <input type="number" name="quantity" value="1" min="1" max="200" required>
+      <button class="btn primary" type="submit">Generate</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>All Vouchers</h2></div>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>Code</th><th>Package</th><th>Customer phone</th><th>Status</th><th>Device</th><th></th></tr></thead>
+      <tbody>
+      {% for v in vouchers %}
+      <tr>
+        <td class="mono">{{v.code}}</td><td>{{v.package}}</td><td>{{v.customer_phone or "-"}}</td>
+        <td><span class="badge {{v.status}}">{{v.status}}</span></td>
+        <td class="mono">{{v.device_id or "-"}}</td>
+        <td>{% if v.status == "unused" %}<a class="btn small" href="{{url_for('activate_voucher', voucher_id=v.id)}}">Activate</a>{% else %}-{% endif %}</td>
+      </tr>
+      {% else %}<tr><td colspan="6" class="empty">No vouchers.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Sites & Network | HAFIDHI WFI{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1>Sites &amp; Network</h1>
+    <p class="muted">Organize locations, MikroTik routers, and access points.</p>
+  </div>
+</div>
+
+<div class="two-col">
+  <section class="panel">
+    <h2>Add site</h2>
+    <form method="post">
+      <input type="hidden" name="action" value="create_site">
+      <label for="site-name">Site name</label>
+      <input class="input" id="site-name" name="name" maxlength="80" placeholder="For example: City Centre" required>
+      <label for="site-location">Address or area</label>
+      <input class="input" id="site-location" name="location" placeholder="District, town, or address">
+      <button class="btn primary" type="submit">Add site</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Register router or access point</h2>
+    {% if sites %}
+    <form method="post">
+      <input type="hidden" name="action" value="create_device">
+      <label for="device-site">Site</label>
+      <select id="device-site" name="site_id" required>
+        <option value="">Choose a site</option>
+        {% for site in sites if site.active %}
+        <option value="{{ site.id }}">{{ site.name }}</option>
+        {% endfor %}
+      </select>
+      <label for="device-type">Device type</label>
+      <select id="device-type" name="device_type" required>
+        <option value="router">Router</option>
+        <option value="access_point">Access point</option>
+      </select>
+      <label for="device-name">Device name</label>
+      <input class="input" id="device-name" name="name" placeholder="For example: Router - Main Hall" required>
+      <label for="device-vendor">Brand</label>
+      <input class="input" id="device-vendor" name="vendor" value="MikroTik" required>
+      <label for="device-model">Model</label>
+      <input class="input" id="device-model" name="model" placeholder="For example: hAP ac2">
+      <label for="device-address">Management address</label>
+      <input class="input" id="device-address" name="management_address" placeholder="Private IP or hostname">
+      <label for="device-parent">Connected router (access points only)</label>
+      <select id="device-parent" name="parent_id">
+        <option value="">No linked router</option>
+        {% for router in routers %}
+        <option value="{{ router.id }}">{{ router.site_name }} / {{ router.name }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn primary" type="submit">Add device</button>
+    </form>
+    {% else %}
+    <p class="muted">Add a site before registering network devices.</p>
+    {% endif %}
+  </section>
+</div>
+
+<section class="panel">
+  <div class="panel-head">
+    <h2>Registered network devices</h2>
+    <span>{{ devices|length }} devices</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Device</th><th>Type</th><th>Site</th><th>Brand / model</th><th>Management address</th><th>Connected router</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+        {% for device in devices %}
+        <tr>
+          <td>{{ device.name }}</td>
+          <td>{{ device.device_type.replace('_', ' ') }}</td>
+          <td>{{ device.site_name }}</td>
+          <td>{{ device.vendor }} {{ device.model or '' }}</td>
+          <td class="mono">{{ device.management_address or '-' }}</td>
+          <td>{{ device.parent_name or '-' }}</td>
+          <td><span class="badge {{ 'active' if device.active else 'expired' }}">{{ 'Active' if device.active else 'Disabled' }}</span></td>
+          <td>
+            <form method="post">
+              <input type="hidden" name="action" value="toggle_device">
+              <input type="hidden" name="device_id" value="{{ device.id }}">
+              <button class="btn small" type="submit">{{ 'Disable' if device.active else 'Enable' }}</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="empty">No network devices registered yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

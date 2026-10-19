@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | HAFIDHI WFI{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1>{{ role_label }} Dashboard</h1>
+    <p class="muted">Operational overview for {{ role_label }}</p>
+  </div>
+  <span class="role-pill">{{ role }}</span>
+</div>
+
+<div class="role-hero role-{{ role }}">
+  <div>
+    <p class="eyebrow">Operational focus</p>
+    <h2>{{ role_summary }}</h2>
+  </div>
+  <div class="mini-tags">
+    {% for item in role_highlights %}
+    <span class="mini-tag">{{ item }}</span>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="stats-grid">
+  {% for label, value in role_cards %}
+  <div class="stat-card">
+    <span>{{ label }}</span>
+    <strong>{{ value }}</strong>
+    <small>{{ role_label }}</small>
+  </div>
+  {% endfor %}
+</div>
+
+{% if show_revenue_chart %}
+<section class="panel revenue-panel" aria-labelledby="revenue-heading">
+  <div class="panel-head">
+    <div>
+      <h2 id="revenue-heading">Paid revenue · last 7 days</h2>
+      <p class="muted">Daily totals in TSh</p>
+    </div>
+  </div>
+  <div class="revenue-chart" role="img" aria-label="Paid revenue over the last seven days">
+    {% for day in revenue_days %}
+    <div class="revenue-day" title="{{ day.label }}: {{ '{:,}'.format(day.amount) }} TSh">
+      <strong>{{ '{:,}'.format(day.amount) }}</strong>
+      <div class="revenue-track"><span style="height: {{ day.height }}%"></span></div>
+      <small>{{ day.label }}</small>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<div class="role-panels">
+  {% for panel in role_panels %}
+  <div class="detail-panel">
+    <h3>{{ panel.title }}</h3>
+    <ul>
+      {% for item in panel['items'] %}
+      <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="panel">
+  <div class="panel-head">
+    <h2>Focus Tasks</h2>
+  </div>
+  <div class="task-list">
+    {% for item in role_actions %}
+    <div class="task-item">• {{ item }}</div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>Recent Vouchers</h2><a class="btn" href="{{url_for('vouchers')}}">Manage</a></div>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Code</th><th>Package</th><th>Status</th><th>Customer</th><th>Device</th><th>Expiry</th></tr></thead>
+    <tbody>
+    {% for r in recent %}
+    <tr><td class="mono">{{r.code}}</td><td>{{r.package}}</td><td><span class="badge {{r.status}}">{{r.status}}</span></td><td>{{r.customer_name or "-"}}</td><td class="mono">{{r.device_id or "-"}}</td><td>{{r.expires_at or "-"}}</td></tr>
+    {% else %}<tr><td colspan="6" class="empty">No vouchers yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+{% endblock %}

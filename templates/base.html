@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="{% block html_lang %}en{% endblock %}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Savanna{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+{% if session.admin_id %}
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><span>📶</span><strong>HAFIDHI</strong><small>WFI</small></div>
+    <nav>
+      <a href="{{url_for('dashboard')}}">Dashboard</a>
+      {% if session.role in ['super_admin', 'admin'] %}
+      <a href="{{url_for('packages')}}">Packages</a>
+      <a href="{{url_for('network_inventory')}}">Sites &amp; Network</a>
+      {% endif %}
+      {% if session.role in ['super_admin', 'admin', 'support', 'agent'] %}
+      <a href="{{url_for('vouchers')}}">Vouchers</a>
+      {% endif %}
+      {% if session.role in ['super_admin', 'admin', 'support', 'agent', 'customer_care'] %}
+      <a href="{{url_for('customers')}}">Customers</a>
+      {% endif %}
+      {% if session.role in ['super_admin', 'admin', 'support', 'customer_care'] %}
+      <a href="{{url_for('session_list')}}">Sessions</a>
+      {% endif %}
+      {% if session.role in ['super_admin', 'admin', 'finance'] %}
+      <a href="{{url_for('sales')}}">Sales</a>
+      {% endif %}
+      {% if session.role in ['super_admin', 'admin'] %}
+      <a href="{{url_for('audit')}}">Audit</a>
+      {% endif %}
+      {% if session.role == 'super_admin' %}
+      <a href="{{url_for('gateway')}}">Gateway</a>
+      <a href="{{url_for('integrations')}}">Integrations</a>
+      <a href="{{url_for('admins')}}">Admins</a>
+      {% endif %}
+      <a href="{{url_for('change_password')}}">My password</a>
+      <a href="{{url_for('portal')}}">Customer Portal</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <span>Signed in as {{session.username}}</span>
+      <span class="role-pill">{{session.role or 'admin'}}</span>
+      <a href="{{url_for('logout')}}">Logout</a>
+    </div>
+  </aside>
+  <main class="main">
+{% else %}
+<main class="public-main">
+{% endif %}
+
+<div class="page">
+{% with messages=get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <div class="alert {{category}}">{{message}}</div>
+  {% endfor %}
+{% endwith %}
+{% block content %}{% endblock %}
+</div>
+
+{% if session.admin_id %}</main></div>{% else %}</main>{% endif %}
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

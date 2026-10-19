@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Gateway | Savanna{% endblock %}
+{% block content %}
+<div class="topbar"><div><h1>Gateway Configuration</h1><p class="muted">Connect the hotspot to a real router or controller.</p></div></div>
+
+<div class="two-col">
+  <section class="panel">
+    <h2>Integration Settings</h2>
+    <form method="post">
+      <label>Router Type</label>
+      <select name="router_type">
+        <option value="simulated" {% if settings.router_type == 'simulated' %}selected{% endif %}>Simulated</option>
+        <option value="mikrotik" {% if settings.router_type == 'mikrotik' %}selected{% endif %}>MikroTik</option>
+        <option value="openwrt" {% if settings.router_type == 'openwrt' %}selected{% endif %}>OpenWrt</option>
+        <option value="radius" {% if settings.router_type == 'radius' %}selected{% endif %}>RADIUS</option>
+      </select>
+
+      <label>Router IP / Host</label>
+      <input type="text" name="router_ip" value="{{ settings.router_ip }}" placeholder="192.168.1.1">
+
+      <label>Username</label>
+      <input type="text" name="username" value="{{ settings.username or '' }}" placeholder="admin">
+
+      <label>Password</label>
+      <input type="password" name="password" value="{{ settings.password or '' }}" placeholder="••••••••">
+
+      <label class="checkbox-row">
+        <input type="checkbox" name="enabled" {% if settings.enabled %}checked{% endif %}>
+        Enable integration
+      </label>
+
+      <button class="btn primary">Save Gateway</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Current Status</h2>
+    <div class="voucher-preview">
+      <span>Router</span>
+      <strong>{{ settings.router_type|title }}</strong>
+      <small>{{ settings.router_ip }}</small>
+      <small>Enabled: {{ 'Yes' if settings.enabled else 'No' }}</small>
+      <small>Last sync: {{ settings.last_sync or 'Never' }}</small>
+    </div>
+    <p class="muted">This layer is the integration point for a real router or controller. Configure the target gateway here, then connect it to an actual access-control API or hotspot service.</p>
+  </section>
+</div>
+{% endblock %}

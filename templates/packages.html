@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Packages | Savanna{% endblock %}
+{% block content %}
+<div class="topbar"><div><h1>Packages</h1><p class="muted">Create and manage hotspot pricing plans.</p></div></div>
+
+{% if edit_package %}
+<section class="panel">
+  <div class="panel-head"><h2>Edit {{edit_package.name}}</h2></div>
+  <form method="post">
+    <input type="hidden" name="action" value="update">
+    <input type="hidden" name="package_id" value="{{edit_package.id}}">
+    <label for="edit-package-name">Package Name</label>
+    <input id="edit-package-name" type="text" name="name" value="{{edit_package.name}}" required>
+    <label for="edit-package-price">Price (TSh)</label>
+    <input id="edit-package-price" type="number" name="price" min="1" value="{{edit_package.price}}" required>
+    <label for="edit-package-duration">Duration (hours)</label>
+    <input id="edit-package-duration" type="number" name="duration_hours" min="1" value="{{edit_package.duration_hours}}" required>
+    <button class="btn primary" type="submit">Save changes</button>
+    <a class="btn" href="{{url_for('packages')}}">Cancel</a>
+  </form>
+</section>
+{% endif %}
+
+<div class="two-col">
+  <section class="panel">
+    <h2>Add Package</h2>
+    <form method="post">
+      <input type="hidden" name="action" value="add">
+      <label>Package Name</label>
+      <input type="text" name="name" placeholder="e.g. Weekend" required>
+      <label>Price (TSh)</label>
+      <input type="number" name="price" min="1" required>
+      <label>Duration (hours)</label>
+      <input type="number" name="duration_hours" min="1" required>
+      <button class="btn primary">Save Package</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>Existing Packages</h2></div>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>Name</th><th>Price</th><th>Duration</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+      {% for p in packages %}
+      <tr>
+        <td>{{p.name}}</td>
+        <td>{{"{:,}".format(p.price)}} TSh</td>
+        <td>{{p.duration_hours}} hrs</td>
+        <td><span class="badge {{'active' if p.active else 'expired'}}">{{'active' if p.active else 'inactive'}}</span></td>
+        <td>
+          <a class="btn small" href="{{url_for('packages', edit=p.id)}}">Edit</a>
+          <form method="post" class="inline-form">
+            <input type="hidden" name="action" value="toggle">
+            <input type="hidden" name="package_id" value="{{p.id}}">
+            <button class="btn small">{{'Disable' if p.active else 'Enable'}}</button>
+          </form>
+          <form method="post" class="inline-form">
+            <input type="hidden" name="action" value="delete">
+            <input type="hidden" name="package_id" value="{{p.id}}">
+            <button class="btn small danger" onclick="return confirm('Delete this package?')">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="empty">No packages yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </section>
+</div>
+{% endblock %}

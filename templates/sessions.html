@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Sessions | Savanna{% endblock %}
+{% block content %}
+<div class="topbar"><div><h1>Sessions</h1><p class="muted">Customer authentication history and live controls.</p></div></div>
+<div class="panel"><div class="table-wrap"><table>
+<thead><tr><th>Voucher</th><th>Device</th><th>IP</th><th>Login</th><th>Expiry</th><th>Logout</th><th>Action</th></tr></thead>
+<tbody>{% for s in sessions %}<tr><td class="mono">{{s.code}}</td><td class="mono">{{s.device_id}}</td><td>{{s.ip_address or "-"}}</td><td>{{s.login_at}}</td><td>{{s.expires_at or "-"}}</td><td>{{s.logout_at or "Active"}}</td><td>
+  {% if s.logout_at is none %}
+  <div class="inline-actions">
+    <form method="post" action="{{ url_for('end_session', session_id=s.id) }}">
+      <button class="btn small danger" type="submit">End</button>
+    </form>
+    <form method="post" action="{{ url_for('extend_session', session_id=s.id) }}">
+      <button class="btn small primary" type="submit">+1h</button>
+    </form>
+  </div>
+  {% else %}
+  <span class="badge expired">Closed</span>
+  {% endif %}
+</td></tr>{% else %}<tr><td colspan="7" class="empty">No sessions yet.</td></tr>{% endfor %}</tbody>
+</table></div></div>
+{% endblock %}

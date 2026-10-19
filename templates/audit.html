@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Audit Log | Savanna{% endblock %}
+{% block content %}
+<div class="topbar"><div><h1>Audit Log</h1><p class="muted">View recent admin actions and system changes.</p></div></div>
+
+<div class="panel">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>User</th><th>Action</th><th>Details</th><th>Time</th></tr></thead>
+      <tbody>
+        {% for log in logs %}
+        <tr>
+          <td>{{ log.username or '-' }}</td>
+          <td>{{ log.action }}</td>
+          <td>{{ log.details or '-' }}</td>
+          <td>{{ log.created_at }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="empty">No audit events yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

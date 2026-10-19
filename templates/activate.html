@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Activate Voucher | Savanna{% endblock %}
+{% block content %}
+<div class="form-page">
+<section class="panel">
+<h1>Activate Voucher</h1>
+<p class="muted">Bind this voucher to one device.</p>
+<div class="voucher-preview"><span>{{voucher.package}}</span><strong>{{voucher.code}}</strong><small>{{"{:,}".format(voucher.price)}} TSh</small></div>
+<form method="post">
+<label>Customer name</label>
+<input name="customer_name" placeholder="Customer name">
+<label>Device ID</label>
+<input name="device_id" placeholder="Example: DEVICE-001" required>
+<label>Payment Method</label>
+<select name="payment_method">
+  <option value="cash">Cash</option>
+  <option value="card">Card</option>
+  <option value="mobile_money">Mobile Money</option>
+  <option value="voucher">Voucher</option>
+</select>
+<label>Amount Paid (TSh)</label>
+<input type="number" name="amount_paid" value="{{voucher.price}}" min="0" required>
+<button class="btn primary">Activate & Bind Device</button>
+<a class="btn ghost" href="{{url_for('vouchers')}}">Cancel</a>
+</form>
+</section>
+</div>
+{% endblock %}
